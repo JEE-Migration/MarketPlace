@@ -1,0 +1,190 @@
+
+
+
+<div ng-hide="ctrl.editMode">
+    <div class="col-sm-12">
+        <div ng-repeat="record in records" ng-show = "cheap(currentGroup, priceItem, record)">
+            <div class="col-sm-4 well text-center">
+                <div class="col-md-12">
+                    <div class="img-thumbnail" id="cover" ng-if="record.cellPhone.image">
+                        <a ng-href="{{record.cellPhone.image}}" target="_blank">
+                            <img class="img-responsive" style="height: 20vw;" ng-src="{{record.cellPhone.image}}" alt="{{record.cellPhone.image}}">
+                        </a>
+                    </div>
+                </div>
+                <div class="caption" >
+                    <p><strong>Cellphone:</strong> {{record.cellPhone.name}}</p>
+                    <p><strong>Price:</strong> {{record.price | currency}}</p>
+                    <p><strong>Discount</strong> {{record.discount | number:1}} %</p>
+                    <p><strong>Provider:</strong> {{record.provider.name}}</p>
+                </div>
+                <p class="text-center">               
+                    <div class="btn-group">
+                        <button ng-repeat="action in ctrl.recordActions" id="{{$parent.$index}}-{{action.name}}-btn" class="btn btn-{{action.class || 'default'}}" ng-show="action.show()" ng-click="action.fn(record)">
+                            <span class="glyphicon glyphicon-{{action.icon}}"></span> {{action.displayName}}
+                        </button>
+                        <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="javascript:;" ng-repeat="action in ctrl.commentActions" id="{{$parent.$index}}-{{action.name}}-btn" ng-show="action.show()" ng-click="action.fn(record)">
+                                    <span class="glyphicon glyphicon-{{action.icon}}"></span> {{action.displayName}}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" ng-repeat="action in ctrl.questionActions" id="{{$parent.$index}}-{{action.name}}-btn" ng-show="action.show()" ng-click="action.fn(record)">
+                                    <span class="glyphicon glyphicon-{{action.icon}}"></span> {{action.displayName}}
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <a href="javascript:;" ng-repeat="action in ctrl.cheapestActions" id="{{$parent.$index}}-{{action.name}}-btn" ng-show="action.show()" ng-click="action.fn(record)">
+                                    <span class="glyphicon glyphicon-{{action.icon}}"></span> {{action.displayName}}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" ng-repeat="action in ctrl.cheapestProvActions" id="{{$parent.$index}}-{{action.name}}-btn" ng-show="action.show()" ng-click="action.fn(record)">
+                                    <span class="glyphicon glyphicon-{{action.icon}}"></span> {{action.displayName}}
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:;" ng-repeat="action in ctrl.discountActions" id="{{$parent.$index}}-{{action.name}}-btn" ng-show="action.show()" ng-click="action.fn(record)">
+                                    <span class="glyphicon glyphicon-{{action.icon}}"></span> {{action.displayName}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div class="text-center">
+        <pagination ng-show="ctrl.numPages > 1" num-pages="ctrl.numPages" total-items="ctrl.totalItems"
+                    ng-model="ctrl.currentPage" ng-change="ctrl.pageChanged()" items-per-page="ctrl.itemsPerPage"
+                    max-size="ctrl.maxSize" class="pagination-md" boundary-links="true" rotate="false"></pagination>
+    </div>
+</div>
+
+<!-- Para los modals //-->
+<!-- Comentarios //-->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id = "titleProduct">Comment</h4>
+            </div>
+            <div class = "modal-body" style = "height: 350px; overflow-y: auto;" id = "listComments">
+                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Excepturi aut, quae possimus dolorem iste omnis fugit corporis facere voluptatem quis in dicta, perferendis earum tenetur. Fugit in at corporis deleniti.
+            </div>
+            <form ng-repeat="action in ctrl.saveComment" id="loginForm" method="post" class="form-horizontal" ng-submit="action.fn()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <textarea ng-repeat="action in ctrl.keyActions" class="form-control" rows="2" id="comment" style = "width: 95%; margin: 0 auto; resize:none;" ng-keyup = "action.fn()"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div style = "position: absolute; top: 550px; right: 165px; width: 30px; font-weight: bold;" id = "cantidad" align = "left">265</div>     
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Para las Preguntas //-->
+<div class="modal fade" id="modalQuestion" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title" id = "titleProductQuestion">Question</h4>
+            </div>
+            <form ng-repeat="action in ctrl.saveQuestion" id="loginForm" method="post" class="form-horizontal" ng-submit="action.fn()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div id = "nameUserQuestion"></div>
+                        <textarea ng-repeat="action in ctrl.keyActions" class="form-control" rows="4" id="question" style = "width: 90%; margin: 0 auto;" ng-keyup = "action.fn()"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Para búsqueda avanzada //-->
+<div class="modal fade" id="myModalHorizontal" tabindex="-1" role="dialog" 
+     aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <button type="button" class="close" 
+                   data-dismiss="modal">
+                       <span aria-hidden="true">&times;</span>
+                       <span class="sr-only">Close</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    Advanced Search
+                </h4>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="modal-body">
+                
+                <form class="form-horizontal" role="form" >
+                  <div class="form-group">
+                    <label  class="col-sm-2 control-label"
+                              for="inputEmail3">Model</label>
+                    <div class="col-sm-10">
+                        <select  class="form-control" id = "model">
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label"
+                          for="inputPassword3" >City</label>
+                    <div class="col-sm-10">
+                        <select  class="form-control" id = "cities" title="test">
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label"
+                          for="inputPassword3" >Provider</label>
+                    <div class="col-sm-10">
+                        <select  class="form-control" id = "providers">
+                        </select>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="col-sm-2 control-label"
+                          for="inputPassword3" >Category</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id = "categories" >
+                            
+                        </select>
+                    </div>
+                  </div>
+                </form>
+                </div>
+            
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default"
+                        data-dismiss="modal">submit
+                            Close
+                </button>
+                <button type="submit" class="btn btn-primary" id = "advancedForm">Search
+                 </button>          
+            </div>
+        </div>
+    </div>
+</div>
